@@ -11,7 +11,8 @@ uint16_t lightvalue = 0;
 
 #define I2C_SLAVE_ADDRESS 0x05  //this slave address
 #include <TinyWireS.h>
-#define lightsensor A3
+#define lightsensor A2
+#define testLed 3
 union SensorData { 
   uint8_t sensor8[2];
   uint16_t sensor16;
@@ -20,15 +21,19 @@ void setup() {
   TinyWireS.begin(I2C_SLAVE_ADDRESS);
   TinyWireS.onRequest(requestEvent);
   pinMode(lightsensor, INPUT);
+  pinMode(testLed,OUTPUT);
+  //digitalWrite(testLed, HIGH);
 }
 void loop() {
   uniondata.sensor16 = analogRead(lightsensor);
+  TinyWireS_stop_check();
+  
    }
 void requestEvent() {
-   
   TinyWireS.write(uniondata.sensor8[0]);
   TinyWireS.write(uniondata.sensor8[1]);  
- 
+  
+  
 
  
     
