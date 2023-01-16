@@ -39,6 +39,7 @@ void loop()
   xaxis.sensor16 = analogRead(joyxpin);
   yaxis.sensor16= analogRead(joyypin);
   buton = digitalRead(joybutpin);
+  TinyWireS_stop_check();
  }
 
 void requestEvent()
@@ -47,5 +48,5 @@ void requestEvent()
   TinyWireS.write(xaxis.sensor8[1]);
   TinyWireS.write(yaxis.sensor8[0]);
   TinyWireS.write(yaxis.sensor8[1]);
-  TinyWireS.write(buton);
+  TinyWireS.write(buton^(0x01));
  }
