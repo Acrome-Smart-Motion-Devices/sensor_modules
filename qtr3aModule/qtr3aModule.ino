@@ -7,9 +7,10 @@
 #define QTR_R   (4)
 
 
-int8_t data = 0;
+uint8_t data = 0;
 
-void setup() {
+void setup()
+{
   pinMode(QTR_L, INPUT);
   pinMode(QTR_M, INPUT);
   pinMode(QTR_R, INPUT);
@@ -19,7 +20,8 @@ void setup() {
 }
 
 
-void loop() {
+void loop()
+{
   data = ((digitalRead(QTR_L)) << 0) | ((digitalRead(QTR_M)) << 1) | ((digitalRead(QTR_R)) << 2);
 }
 
@@ -27,3 +29,6 @@ void loop() {
 void requestEvent() {
   Wire.write(data);
 }
+
+
+//bu zaten tek byte da yollanmis. Buna ne yapilacakti
