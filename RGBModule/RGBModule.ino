@@ -1,6 +1,23 @@
 #include <Wire.h>
 
-#define I2C_SLAVE_ADDRESS   (0x07)
+#define ID_OFFSET       41
+uint8_t i2cSlaveAdress = 0;
+
+//ID selector
+void setupID(){
+  pinMode(0, INPUT);
+  pinMode(1, INPUT);
+  pinMode(2, INPUT);
+  pinMode(3, INPUT);
+  pinMode(4, INPUT);
+
+  int i;
+  for(i=4;i>=0;i--) if(digitalRead(i)==1) break;
+  if(i == -1) i2cSlaveAdress = 0;
+
+  i2cSlaveAdress = i + ID_OFFSET;
+}
+
 #define BUZZER_PIN          (1)
 
 int LED_R_PIN = 0;
@@ -10,10 +27,11 @@ int LED_B_PIN = 0;
 uint8_t receivedData;
 
 typedef struct{
-    int red;
-    int green;
-    int blue;
+    uint8_t red;
+    uint8_t green;
+    uint8_t blue;
 }RGBColor;
+
 RGBColor color;
 
 typedef enum{
@@ -48,12 +66,17 @@ RGBColor colors[] = {
     {75, 0, 130}       // Indigo (Çivit Rengi)
 };
 
+RGBColor numberToRGBColor(uint8_t number);
+
 void setup() {
-  Wire.begin(I2C_SLAVE_ADDRESS);
-  Wire.onRecevie(receiveEvent);
   pinMode(LED_R_PIN, OUTPUT);
   pinMode(LED_G_PIN, OUTPUT);
   pinMode(LED_B_PIN, OUTPUT);
+  setupID();
+  if(i2cSlaveAdress != 0){
+    Wire.begin(i2cSlaveAdress);
+  }
+  Wire.onReceive(receiveEvent);  
 }
 
 void loop() {

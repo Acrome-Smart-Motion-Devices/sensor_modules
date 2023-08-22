@@ -1,12 +1,31 @@
 #include <Wire.h>
 
-int buzzerEnable = 0;
+#define ID_OFFSET   11
+uint8_t i2cSlaveAdress = 0;
 
-#define I2C_SLAVE_ADDRESS   (0x07)
+//ID selector
+void setupID(){
+  pinMode(0, INPUT);
+  pinMode(1, INPUT);
+  pinMode(2, INPUT);
+  pinMode(3, INPUT);
+  pinMode(4, INPUT);
+
+  int i;
+  for(i=4;i>=0;i--) if(digitalRead(i)==1) break;
+  if(i == -1) i2cSlaveAdress = 0;
+
+  i2cSlaveAdress = i + ID_OFFSET;
+}
 #define BUZZER_PIN          (1)
 
+int buzzerEnable = 0;
+
 void setup() {
-  Wire.begin(I2C_SLAVE_ADDRESS);
+  setupID();
+  if(i2cSlaveAdress != 0){
+    Wire.begin(i2cSlaveAdress);
+  }
   Wire.onRequest(requestEvent);
   pinMode(BUZZER_PIN, OUTPUT);
 }
@@ -22,7 +41,6 @@ void loop() {
 }
 
 
-void requestEvent()
-{
-  buzzerEnable = 1;
+void requestEvent(){
+  buzzerEnable = Wire.read();  
 }

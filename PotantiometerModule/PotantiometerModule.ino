@@ -1,6 +1,6 @@
 #include <Wire.h>
 
-#define ID_OFFSET   26
+#define ID_OFFSET   36
 uint8_t i2cSlaveAdress = 0;
 
 //ID selector
@@ -17,36 +17,21 @@ void setupID(){
 
   i2cSlaveAdress = i + ID_OFFSET;
 }
-#define QTR_L   (1)
-#define QTR_M   (3)
-#define QTR_R   (4)
 
+#define POTANTIOMETER_PIN   (A0)
+uint8_t potantiometer = 0;
 
-uint8_t data = 0;
-
-void setup()
-{
-  pinMode(QTR_L, INPUT);
-  pinMode(QTR_M, INPUT);
-  pinMode(QTR_R, INPUT);
-
+void setup() {
   setupID();
   if(i2cSlaveAdress != 0){
     Wire.begin(i2cSlaveAdress);
   }
   Wire.onRequest(requestEvent);
 }
-
-
-void loop()
-{
-  data = ((digitalRead(QTR_L)) << 0) | ((digitalRead(QTR_M)) << 1) | ((digitalRead(QTR_R)) << 2);
+void loop() {
+  potantiometer = analogRead(POTANTIOMETER_PIN);
 }
-
 
 void requestEvent() {
-  Wire.write(data);
+    Wire.write(potantiometer);
 }
-
-
-//bu zaten tek byte da yollanmis. Buna ne yapilacakti

@@ -1,6 +1,22 @@
 #include <Wire.h>
 
-#define I2C_SLAVE_ADDRESS   (0x05)  
+#define ID_OFFSET     6
+uint8_t i2cSlaveAdress = 0;
+
+//ID selector
+void setupID(){
+  pinMode(0, INPUT);
+  pinMode(1, INPUT);
+  pinMode(2, INPUT);
+  pinMode(3, INPUT);
+  pinMode(4, INPUT);
+
+  int i;
+  for(i=4;i>=0;i--) if(digitalRead(i)==1) break;
+  if(i == -1) i2cSlaveAdress = 0;
+
+  i2cSlaveAdress = i + ID_OFFSET;
+}
 
 #define AMBIENT_LIGHT_PIN   (A2)
 
@@ -10,14 +26,15 @@ union dataParser {
 } parser;
 
 void setup() {
-  Wire.begin(I2C_SLAVE_ADDRESS);
+  setupID();
+  if(i2cSlaveAdress != 0){
+    Wire.begin(i2cSlaveAdress);
+  }
   Wire.onRequest(requestEvent);
   pinMode(AMBIENT_LIGHT_PIN, INPUT);
 }
 
-
 void loop() {
-
   // ( (V) / 7.4K ohm ) * 4*10^6 = LUX
   //    V * 540,54 = LUX
   

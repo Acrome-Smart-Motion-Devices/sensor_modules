@@ -1,6 +1,22 @@
 #include <Wire.h>
 
-#define I2C_SLAVE_ADDRESS 0x9
+#define ID_OFFSET   16
+uint8_t i2cSlaveAdress = 0;
+
+//ID selector
+void setupID(){
+  pinMode(0, INPUT);
+  pinMode(1, INPUT);
+  pinMode(2, INPUT);
+  pinMode(3, INPUT);
+  pinMode(4, INPUT);
+
+  int i;
+  for(i=4;i>=0;i--) if(digitalRead(i)==1) break;
+  if(i == -1) i2cSlaveAdress = 0;
+
+  i2cSlaveAdress = i + ID_OFFSET;
+}
 
 #define JOYSTICK_X        (A2)
 #define JOYSTICK_Y        (A3)
@@ -17,7 +33,10 @@ parser y;
 
 void setup()
 {
-  Wire.begin(I2C_SLAVE_ADDRESS);
+  setupID();
+  if(i2cSlaveAdress != 0){
+    Wire.begin(i2cSlaveAdress);
+  }
   Wire.onRequest(requestEvent);
   pinMode(JOYSTICK_X, INPUT);
   pinMode(JOYSTICK_Y, INPUT);
