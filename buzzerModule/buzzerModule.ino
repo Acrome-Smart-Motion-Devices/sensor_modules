@@ -13,11 +13,11 @@ void setupID(){
 
   int i;
   for(i=4;i>=0;i--) if(digitalRead(i)==1) break;
-  if(i == -1) i2cSlaveAdress = 0;
+  if(i == -1) i = 0;
 
   i2cSlaveAdress = i + ID_OFFSET;
 }
-#define BUZZER_PIN          (1)
+#define BUZZER_PIN          (5)
 
 int buzzerEnable = 0;
 
@@ -32,12 +32,18 @@ void setup() {
 
 
 void loop() {
-  if (buzzerEnable == 1) {
-    digitalWrite(BUZZER_PIN, HIGH);
-    delay(1000);
-    buzzerEnable = 0;
-  }
-  digitalWrite(BUZZER_PIN, LOW);
+//  if (buzzerEnable == 1) {
+//    digitalWrite(BUZZER_PIN, HIGH);
+//    delay(1000);
+//    buzzerEnable = 0;
+//  }
+//  digitalWrite(BUZZER_PIN, LOW);
+
+
+  digitalWrite(BUZZER_PIN,HIGH);
+  delay(500);
+  digitalWrite(BUZZER_PIN,HIGH);
+  delay(500);
 }
 
 

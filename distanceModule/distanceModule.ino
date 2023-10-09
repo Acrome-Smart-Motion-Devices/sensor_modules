@@ -14,13 +14,13 @@ void setupID(){
 
   int i;
   for(i=4;i>=0;i--) if(digitalRead(i)==1) break;
-  if(i == -1) i2cSlaveAdress = 0;
+  if(i == -1) i = 0;
 
   i2cSlaveAdress = i + ID_OFFSET;
 }
 
-#define TRIGGER_PIN         (3)
-#define ECHO_PIN            (4)
+#define TRIGGER_PIN         (5)
+#define ECHO_PIN            (6)
 #define MAX_DIST            (200)
 
 
