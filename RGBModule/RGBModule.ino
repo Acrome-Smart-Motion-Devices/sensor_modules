@@ -13,18 +13,18 @@ void setupID(){
 
   int i;
   for(i=4;i>=0;i--) if(digitalRead(i)==1) break;
-  if(i == -1) i2cSlaveAdress = 0;
+  if(i == -1) i = 0;
 
   i2cSlaveAdress = i + ID_OFFSET;
 }
 
 #define BUZZER_PIN          (1)
 
-int LED_R_PIN = 0;
-int LED_G_PIN = 0;
-int LED_B_PIN = 0;
+int LED_R_PIN = 9;
+int LED_G_PIN = 6;
+int LED_B_PIN = 5;
 
-uint8_t receivedData;
+uint8_t receivedData = 0;
 
 typedef struct{
     uint8_t red;
@@ -35,7 +35,8 @@ typedef struct{
 RGBColor color;
 
 typedef enum{
-    RED = 0,
+    NOCOLOR = 0,
+    RED,
     GREEN,
     BLUE,
     WHITE,
@@ -51,6 +52,7 @@ typedef enum{
 }tColors;
 
 RGBColor colors[] = {
+    {0, 0, 0},         // No Color
     {255, 0, 0},       // Red (Kırmızı)
     {0, 255, 0},       // Green (Yeşil)
     {0, 0, 255},       // Blue (Mavi)
@@ -60,7 +62,7 @@ RGBColor colors[] = {
     {255, 0, 255},     // Magenta (Pembe)
     {255, 165, 0},     // Orange (Turuncu)
     {128, 0, 128},     // Purple (Mor)
-    {255, 192, 203},   // Pink (Pembe Tonları)
+    {255, 192, 203},   // Pink (Pembe Tonları)     10
     {255, 191, 0},     // Amber (Kehribar Rengi)
     {0, 128, 128},     // Teal (Teal Rengi)
     {75, 0, 130}       // Indigo (Çivit Rengi)
@@ -69,23 +71,22 @@ RGBColor colors[] = {
 RGBColor numberToRGBColor(uint8_t number);
 
 void setup() {
-  pinMode(LED_R_PIN, OUTPUT);
-  pinMode(LED_G_PIN, OUTPUT);
-  pinMode(LED_B_PIN, OUTPUT);
   setupID();
   if(i2cSlaveAdress != 0){
     Wire.begin(i2cSlaveAdress);
+    Wire.onReceive(receiveEvent);
   }
-  Wire.onReceive(receiveEvent);  
+  
+  pinMode(LED_R_PIN, OUTPUT);
+  pinMode(LED_G_PIN, OUTPUT);
+  pinMode(LED_B_PIN, OUTPUT);
 }
 
 void loop() {
     color = numberToRGBColor(receivedData);
-
     analogWrite(LED_R_PIN, color.red);
     analogWrite(LED_G_PIN, color.green);
     analogWrite(LED_B_PIN, color.blue);
-
 }
 
 
@@ -97,7 +98,7 @@ void receiveEvent(int byteCount)
 }
 
 RGBColor numberToRGBColor(uint8_t number) {
-    if (number >= 0 && number <= 12) {
+    if (number >= 0 && number <= 13) {
         return colors[number];
     } else {
         RGBColor invalidColor = {0, 0, 0}; // Error check

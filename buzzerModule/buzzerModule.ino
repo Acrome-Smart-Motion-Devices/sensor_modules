@@ -12,9 +12,10 @@ void setupID(){
   pinMode(4, INPUT);
 
   int i;
-  for(i=4;i>=0;i--) if(digitalRead(i)==1) break;
-  if(i == -1) i = 0;
-
+  for(i=4;i>=0;i--){
+    if(digitalRead(i)==1) break;
+  }
+  if(i == -1)i = 0;
   i2cSlaveAdress = i + ID_OFFSET;
 }
 #define BUZZER_PIN          (5)
@@ -25,28 +26,26 @@ void setup() {
   setupID();
   if(i2cSlaveAdress != 0){
     Wire.begin(i2cSlaveAdress);
+    Wire.onReceive(receiveEvent);
   }
-  Wire.onRequest(requestEvent);
+  
   pinMode(BUZZER_PIN, OUTPUT);
 }
 
 
 void loop() {
-//  if (buzzerEnable == 1) {
-//    digitalWrite(BUZZER_PIN, HIGH);
-//    delay(1000);
-//    buzzerEnable = 0;
-//  }
-//  digitalWrite(BUZZER_PIN, LOW);
-
-
-  digitalWrite(BUZZER_PIN,HIGH);
-  delay(500);
-  digitalWrite(BUZZER_PIN,HIGH);
-  delay(500);
+  if (buzzerEnable == 1) {
+    digitalWrite(BUZZER_PIN,HIGH);
+    delayMicroseconds(1000);
+    digitalWrite(BUZZER_PIN,LOW);
+    delayMicroseconds(1000);
+  }
+  else{
+    digitalWrite(BUZZER_PIN,HIGH);
+  }
 }
 
 
-void requestEvent(){
-  buzzerEnable = Wire.read();  
+void receiveEvent(int byteCount){
+  buzzerEnable = Wire.read();
 }
