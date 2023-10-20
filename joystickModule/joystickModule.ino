@@ -13,14 +13,14 @@ void setupID(){
 
   int i;
   for(i=4;i>=0;i--) if(digitalRead(i)==1) break;
-  if(i == -1) i2cSlaveAdress = 0;
+  if(i == -1) i = 0;
 
   i2cSlaveAdress = i + ID_OFFSET;
 }
 
-#define JOYSTICK_X        (A2)
-#define JOYSTICK_Y        (A3)
-#define JOYSTICK_BUTTON   (1)
+#define JOYSTICK_X        (A0)
+#define JOYSTICK_Y        (A1)
+#define JOYSTICK_BUTTON   (5)
 
 uint8_t button = 0;
 typedef union parser {
@@ -36,8 +36,8 @@ void setup()
   setupID();
   if(i2cSlaveAdress != 0){
     Wire.begin(i2cSlaveAdress);
+    Wire.onRequest(requestEvent);
   }
-  Wire.onRequest(requestEvent);
   pinMode(JOYSTICK_X, INPUT);
   pinMode(JOYSTICK_Y, INPUT);
   pinMode(JOYSTICK_BUTTON, INPUT_PULLUP);
@@ -46,8 +46,8 @@ void setup()
 
 void loop()
 {
-  x.value = analogRead(JOYSTICK_X) / 1023;    //mapping 0-1023 to 0-1
-  y.value = analogRead(JOYSTICK_Y) / 1023;
+  x.value = analogRead(JOYSTICK_X) / 1023.0;    //mapping 0-1023 to 0-1
+  y.value = analogRead(JOYSTICK_Y) / 1023.0;
   button = digitalRead(JOYSTICK_BUTTON);  
   delay(1);
 }

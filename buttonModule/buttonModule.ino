@@ -24,8 +24,8 @@ void setup() {
   setupID();
   if(i2cSlaveAdress != 0){
     Wire.begin(i2cSlaveAdress);
+    Wire.onRequest(requestEvent);
   }
-  Wire.onRequest(requestEvent);
   pinMode(buttonPin, INPUT);
 }
 
