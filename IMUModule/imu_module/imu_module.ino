@@ -32,7 +32,6 @@ float AccX, AccY, AccZ;
 float accAngleX, accAngleY;
 
 void setup() {
-  Serial.begin(9600);
   setupID();
   if(i2cSlaveAdress != 0){
     Wire.begin(i2cSlaveAdress);
@@ -51,10 +50,6 @@ void setup() {
 }
 
 void loop() {
-  
-  
-  
-  // Verileri oku
   wire.beginTransmission(MPU6050_ADDRESS);
   wire.write(0x3B);
   wire.endTransmission(false);
