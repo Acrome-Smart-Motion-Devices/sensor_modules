@@ -29,7 +29,7 @@ void setup() {
   Wire.onRequest(requestEvent);
 }
 void loop() {
-  potantiometer = analogRead(POTANTIOMETER_PIN);
+  potantiometer = map(analogRead(POTANTIOMETER_PIN),0,1024,0,255);
 }
 
 void requestEvent() {
