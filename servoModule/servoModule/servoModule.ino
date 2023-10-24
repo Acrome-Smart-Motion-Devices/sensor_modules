@@ -14,36 +14,38 @@ void setupID(){
 
   int i;
   for(i=4;i>=0;i--) if(digitalRead(i)==1) break;
-  if(i == -1) i2cSlaveAdress = 0;
+  if(i == -1) i = 0;
 
   i2cSlaveAdress = i + ID_OFFSET;
 }
 
-#define I2C_MASTER_ADRESS (0x00)
-#define servoPin            1
+#define servoPin            5
 
 Servo servo;
 
-int8_t val = 0;
+uint8_t receivedData = 0;
 
 
 void setup()
 {
-  servo.attach(servoPin);
-
   setupID();
   if(i2cSlaveAdress != 0){
     Wire.begin(i2cSlaveAdress);
+    Wire.onReceive(receiveEvent);
   }
-  Wire.onReceive(receiveEvent);
+  
+  servo.attach(servoPin);
 }
 
 void loop()
-{
-  Wire.requestFrom(I2C_MASTER_ADRESS, 1);
-  while(Wire.available())val = Wire.read();
-  
-  servo.write(val);
+{  
+  servo.write(receivedData);
+  delay(100);
+}
 
-  delay(1);
+void receiveEvent(int byteCount)
+{ 
+    if (byteCount > 0) {
+    receivedData = Wire.read();
+    }
 }

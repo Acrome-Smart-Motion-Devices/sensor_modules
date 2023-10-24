@@ -36,9 +36,9 @@ void setup() {
 void loop() {
   if (buzzerEnable == 1) {
     digitalWrite(BUZZER_PIN,HIGH);
-    delayMicroseconds(1000);
+    delayMicroseconds(50);
     digitalWrite(BUZZER_PIN,LOW);
-    delayMicroseconds(1000);
+    delayMicroseconds(50);
   }
   else{
     digitalWrite(BUZZER_PIN,HIGH);

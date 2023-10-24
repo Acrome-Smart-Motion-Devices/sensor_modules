@@ -44,7 +44,7 @@ void loop() {
   //parser.lux = analogRead(AMBIENT_LIGHT_PIN);
   
   parser.lux =(uint16_t)(analogRead(AMBIENT_LIGHT_PIN) * 2.34375);
-  delay(200);
+  delay(5);
 }
 
 void requestEvent() {
