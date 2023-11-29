@@ -19,7 +19,7 @@ void setupID(){
   i2cSlaveAdress = i + ID_OFFSET;
 }
 
-#define servoPin            5
+#define servoPin   5
 
 Servo servo;
 
