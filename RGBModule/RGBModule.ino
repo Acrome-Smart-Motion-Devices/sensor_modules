@@ -24,7 +24,7 @@ int LED_R_PIN = 9;
 int LED_G_PIN = 6;
 int LED_B_PIN = 5;
 
-uint8_t receivedData = 0;
+uint32_t receivedData = 0;
 
 typedef struct{
     uint8_t red;
@@ -34,41 +34,6 @@ typedef struct{
 
 RGBColor color;
 
-typedef enum{
-    NOCOLOR = 0,
-    RED,
-    GREEN,
-    BLUE,
-    WHITE,
-    YELLOW,
-    CYAN,
-    MAGENTA,
-    ORANGE,
-    PURPLE,
-    PINK,
-    AMBER,
-    TEAL,
-    INDIGO
-}tColors;
-
-RGBColor colors[] = {
-    {0, 0, 0},         // No Color
-    {255, 0, 0},       // Red (Kırmızı)
-    {0, 255, 0},       // Green (Yeşil)
-    {0, 0, 255},       // Blue (Mavi)
-    {255, 255, 255},   // White (Beyaz)
-    {255, 255, 0},     // Yellow (Sarı)
-    {0, 255, 255},     // Cyan (Turkuaz/Mavi Yeşil)
-    {255, 0, 255},     // Magenta (Pembe)
-    {255, 165, 0},     // Orange (Turuncu)
-    {128, 0, 128},     // Purple (Mor)
-    {255, 192, 203},   // Pink (Pembe Tonları)     10
-    {255, 191, 0},     // Amber (Kehribar Rengi)
-    {0, 128, 128},     // Teal (Teal Rengi)
-    {75, 0, 130}       // Indigo (Çivit Rengi)
-};
-
-RGBColor numberToRGBColor(uint8_t number);
 
 void setup() {
   setupID();
@@ -83,25 +48,16 @@ void setup() {
 }
 
 void loop() {
-    color = numberToRGBColor(receivedData);
     analogWrite(LED_R_PIN, color.red);
     analogWrite(LED_G_PIN, color.green);
     analogWrite(LED_B_PIN, color.blue);
 }
 
-
-void receiveEvent(int byteCount)
-{ 
-    if (byteCount > 0) {
-    receivedData = Wire.read();
-    }
-}
-
-RGBColor numberToRGBColor(uint8_t number) {
-    if (number >= 0 && number <= 13) {
-        return colors[number];
-    } else {
-        RGBColor invalidColor = {0, 0, 0}; // Error check
-        return invalidColor;
-    }
+void receiveEvent(int byteCount) {
+  if (byteCount >= 3) {
+    color.red = Wire.read();    // İlk byte'ı al
+    color.green = Wire.read();  // İkinci byte'ı al
+    color.blue = Wire.read();   // Üçüncü byte'ı al
+    // İstediğiniz işlemleri gerçekleştirin
+  }
 }

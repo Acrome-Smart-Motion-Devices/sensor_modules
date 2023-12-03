@@ -23,7 +23,7 @@ void setupID(){
 
 Servo servo;
 
-uint8_t receivedData = 0;
+uint8_t receivedData = 0;   //isaretli sayi almali.  motorun donme yonune gore kontrol et test et.
 
 
 void setup()
