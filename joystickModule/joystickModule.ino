@@ -25,7 +25,7 @@ void setupID(){
 uint8_t button = 0;
 typedef union parser {
   uint8_t   u8[4]; //int w 4 bytes
-  int     value;
+  int32_t     value;
 } parser;
 
 parser x;
@@ -47,7 +47,7 @@ void setup()
 void loop()
 {
   x.value = map(analogRead(JOYSTICK_X), 0, 1023, -100, 100);    //mapping 0-1023 to -100 100
-  y.value = map(analogRead(JOYSTICK_Y), 0, 1023, -100, 100);
+  y.value = map(analogRead(JOYSTICK_Y), 0, 1023, 100, -100);
   button = digitalRead(JOYSTICK_BUTTON);  
   delay(1);
 }

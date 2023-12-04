@@ -80,8 +80,6 @@ typedef union parser {
 } parser;
 
 parser buzzerFrequency;
-parser buzzerDuration;
-
 
 void setup() {
   setupID();
@@ -99,36 +97,16 @@ void loop() {
     noTone(BUZZER_PIN);
   }
   else{
-    playNote(buzzerFrequency.value, buzzerDuration.value);
+      tone(BUZZER_PIN, buzzerFrequency.value);
   }
 }
 
-
-void playNote(Note note, int duration) { //bir notanin ne kadar sure boyunca calacagini ayarlar.
-  tone(BUZZER_PIN, note);
-  if(!(duration == -1)){
-    delay(duration + 50);  // Notanın çalınma süresi boyunca bekleyin
-    noTone(BUZZER_PIN);  // Buzzer'ı kapat
-  }
-}
 
 void receiveEvent(int byteCount){
-  if (byteCount >= 8) {
+  if (byteCount >= 4) {
     buzzerFrequency.u8[0] = Wire.read();    // İlk byte'ı al
     buzzerFrequency.u8[1] = Wire.read();
     buzzerFrequency.u8[2] = Wire.read();
     buzzerFrequency.u8[3] = Wire.read();
-
-    buzzerDuration.u8[0] = Wire.read();
-    buzzerDuration.u8[1] = Wire.read();
-    buzzerDuration.u8[2] = Wire.read();
-    buzzerDuration.u8[3] = Wire.read();
-  }
 }
-
-
-
-
-
-
-
+}
