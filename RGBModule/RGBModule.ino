@@ -18,8 +18,6 @@ void setupID(){
   i2cSlaveAdress = i + ID_OFFSET;
 }
 
-#define BUZZER_PIN          (1)
-
 int LED_R_PIN = 9;
 int LED_G_PIN = 6;
 int LED_B_PIN = 5;

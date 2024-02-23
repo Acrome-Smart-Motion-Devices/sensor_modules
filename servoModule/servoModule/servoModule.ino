@@ -19,7 +19,7 @@ void setupID(){
   i2cSlaveAdress = i + ID_OFFSET;
 }
 
-#define servoPin   5
+
 
 Servo servo;
 
@@ -34,13 +34,12 @@ void setup()
     Wire.onReceive(receiveEvent);
   }
   
-  servo.attach(servoPin);
+  servo.attach(5);
 }
 
 void loop()
 {  
   servo.write(receivedData);
-  delay(100);
 }
 
 void receiveEvent(int byteCount)
