@@ -1,4 +1,5 @@
 #include <Wire.h>
+#include <avr/wdt.h>
 
 #define ID_OFFSET   26
 uint8_t i2cSlaveAdress = 0;
@@ -25,7 +26,7 @@ uint8_t data = 0;
 
 void setup()
 {
-
+  wdt_enable(WDTO_250MS);
   setupID();
   if(i2cSlaveAdress != 0){
     Wire.begin(i2cSlaveAdress);
@@ -61,4 +62,5 @@ void loop()
 
 void requestEvent() {
   Wire.write(data);
+  wdt_reset(); //watchdog timer reset
 }

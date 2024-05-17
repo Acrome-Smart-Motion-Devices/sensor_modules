@@ -1,5 +1,6 @@
 #include <Wire.h>
 #include <NewPing.h>
+#include <avr/wdt.h>
 
 #define ID_OFFSET   21
 uint8_t i2cSlaveAdress = 0;
@@ -33,6 +34,7 @@ union DATA {
 NewPing sonar(TRIGGER_PIN, ECHO_PIN, MAX_DIST);
 
 void setup() {
+  wdt_enable(WDTO_250MS);
   setupID();
   if(i2cSlaveAdress != 0){
     Wire.begin(i2cSlaveAdress);
@@ -49,4 +51,5 @@ void loop() {
 void requestEvent() {
   Wire.write(dataField.u8[0]);
   Wire.write(dataField.u8[1]);
+  wdt_reset();
 }

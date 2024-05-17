@@ -1,4 +1,5 @@
 #include <Wire.h>
+#include <avr/wdt.h>
 
 #define ID_OFFSET   16
 uint8_t i2cSlaveAdress = 0;
@@ -33,6 +34,7 @@ parser y;
 
 void setup()
 {
+  wdt_enable(WDTO_250MS);
   setupID();
   if(i2cSlaveAdress != 0){
     Wire.begin(i2cSlaveAdress);
@@ -64,4 +66,6 @@ void requestEvent()
   Wire.write(y.u8[2]);
   Wire.write(y.u8[3]);
   Wire.write(button ^ (0x01));
+  wdt_reset();
+
 }

@@ -1,5 +1,6 @@
 #include <SoftwareWire.h>
 #include <Wire.h>
+#include <avr/wdt.h>
 
 #define ID_OFFSET   46
 uint8_t i2cSlaveAdress = 0;
@@ -32,6 +33,7 @@ float AccX, AccY, AccZ;
 float accAngleX, accAngleY;
 
 void setup() {
+  wdt_enable(WDTO_250MS);
   setupID();
   if(i2cSlaveAdress != 0){
     Wire.begin(i2cSlaveAdress);
@@ -75,5 +77,6 @@ void requestEvent()
 {
   for (uint8_t i = 0; i < sizeof(tIMU); i++) {
     Wire.write(*(((uint8_t*) &IMU) + i));
+    wdt_reset();
   }
 }

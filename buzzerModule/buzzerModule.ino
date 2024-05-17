@@ -1,4 +1,6 @@
 #include <Wire.h>
+#include <avr/wdt.h>
+
 #define ID_OFFSET   11
 uint8_t i2cSlaveAdress = 0;
 
@@ -82,6 +84,7 @@ typedef union parser {
 parser buzzerFrequency;
 
 void setup() {
+  wdt_enable(WDTO_250MS);
   setupID();
   if(i2cSlaveAdress != 0){
     Wire.begin(i2cSlaveAdress);
@@ -108,5 +111,6 @@ void receiveEvent(int byteCount){
     buzzerFrequency.u8[1] = Wire.read();
     buzzerFrequency.u8[2] = Wire.read();
     buzzerFrequency.u8[3] = Wire.read();
-}
+    wdt_reset();
+  }
 }

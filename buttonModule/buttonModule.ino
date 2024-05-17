@@ -1,7 +1,8 @@
 #include <Wire.h>
-
+#include <avr/wdt.h>
 #define ID_OFFSET   1
 uint8_t i2cSlaveAdress = 0;
+
 
 //ID selector
 void setupID(){
@@ -21,6 +22,7 @@ void setupID(){
 uint8_t button = 0;
 
 void setup() {
+  wdt_enable(WDTO_250MS);
   setupID();
   if(i2cSlaveAdress != 0){
     Wire.begin(i2cSlaveAdress);
@@ -30,10 +32,13 @@ void setup() {
 }
 
 void loop() {
+
   button = digitalRead(buttonPin)^(0x01);
+
 }
 
 
 void requestEvent() {
   Wire.write(button);
+  wdt_reset();
 }

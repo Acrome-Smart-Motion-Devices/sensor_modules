@@ -1,5 +1,7 @@
 #include <Wire.h>
 #include <Servo.h>
+#include <avr/wdt.h>
+
 
 #define ID_OFFSET   31
 uint8_t i2cSlaveAdress = 0;
@@ -26,8 +28,8 @@ Servo servo;
 uint8_t receivedData = 0;   //isaretli sayi almali.  motorun donme yonune gore kontrol et test et.
 
 
-void setup()
-{
+void setup(){
+  wdt_enable(WDTO_250MS);
   setupID();
   if(i2cSlaveAdress != 0){
     Wire.begin(i2cSlaveAdress);
@@ -46,5 +48,6 @@ void receiveEvent(int byteCount)
 { 
     if (byteCount > 0) {
     receivedData = Wire.read();
+    wdt_reset();
     }
 }

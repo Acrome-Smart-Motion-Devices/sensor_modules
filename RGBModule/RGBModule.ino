@@ -1,10 +1,12 @@
 #include <Wire.h>
+#include <avr/wdt.h>
 
 #define ID_OFFSET       41
 uint8_t i2cSlaveAdress = 0;
 
 //ID selector
 void setupID(){
+
   pinMode(0, INPUT);
   pinMode(1, INPUT);
   pinMode(2, INPUT);
@@ -34,15 +36,17 @@ RGBColor color;
 
 
 void setup() {
+  wdt_enable(WDTO_250MS);
+
   setupID();
   if(i2cSlaveAdress != 0){
     Wire.begin(i2cSlaveAdress);
     Wire.onReceive(receiveEvent);
   }
-  
   pinMode(LED_R_PIN, OUTPUT);
   pinMode(LED_G_PIN, OUTPUT);
   pinMode(LED_B_PIN, OUTPUT);
+
 }
 
 void loop() {
@@ -56,6 +60,7 @@ void receiveEvent(int byteCount) {
     color.red = Wire.read();    // İlk byte'ı al
     color.green = Wire.read();  // İkinci byte'ı al
     color.blue = Wire.read();   // Üçüncü byte'ı al
-    // İstediğiniz işlemleri gerçekleştirin
+    
+    wdt_reset(); //watchdog timer reset
   }
 }
