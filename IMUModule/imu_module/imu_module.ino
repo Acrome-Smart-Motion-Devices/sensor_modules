@@ -3,7 +3,16 @@
 #include <avr/wdt.h>
 
 #define ID_OFFSET   46
+#define Sensor_ArrySize 128  //** Sensor_ArrySize 2 nin katı olmalı
 uint8_t i2cSlaveAdress = 0;
+
+
+float  Sensor1Arry[Sensor_ArrySize],Sensor1Sum,Sensor1AVG,Sensor1NewData;
+unsigned char Sensor1Indis;
+
+float  Sensor2Arry[Sensor_ArrySize],Sensor2Sum,Sensor2AVG,Sensor2NewData;
+unsigned char Sensor2Indis;
+
 
 //ID selector
 void setupID(){
@@ -64,12 +73,25 @@ void loop() {
   accAngleX = (atan(AccY / sqrt(pow(AccX, 2) + pow(AccZ, 2))) * 180 / PI) - 0.58; // AccErrorX ~(0.58)
   accAngleY = (atan(-1 * AccX / sqrt(pow(AccY, 2) + pow(AccZ, 2))) * 180 / PI) + 1.58; // AccErrorY ~(-1.58)
 
+  Sensor1NewData = accAngleX;
+  Sensor2NewData = accAngleY;
 
+  // filtering // moving avarage //
+  Sensor1Sum = Sensor1Sum + Sensor1NewData - Sensor1Arry[Sensor1Indis];
+  Sensor1AVG = Sensor1Sum / Sensor_ArrySize;
+  Sensor1Arry[Sensor1Indis] = Sensor1NewData;
+  Sensor1Indis ++;
+  Sensor1Indis &= (Sensor_ArrySize - 1);  
+
+  Sensor2Sum = Sensor2Sum + Sensor2NewData - Sensor2Arry[Sensor2Indis];
+  Sensor2AVG = Sensor2Sum / Sensor_ArrySize;
+  Sensor2Arry[Sensor2Indis] = Sensor2NewData;
+  Sensor2Indis ++;
+  Sensor2Indis &= (Sensor_ArrySize - 1);  
+  
   // 
-  IMU.roll = accAngleX;
-  IMU.pitch = accAngleY;
-
-  delay(10);
+  IMU.roll = Sensor1AVG;
+  IMU.pitch = Sensor2AVG;
 }
 
 
