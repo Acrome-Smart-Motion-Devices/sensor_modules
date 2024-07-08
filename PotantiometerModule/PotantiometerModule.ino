@@ -4,6 +4,10 @@
 #define ID_OFFSET   36
 uint8_t i2cSlaveAdress = 0;
 
+#define Sensor_ArrySize 16  //** Sensor_ArrySize 2 nin katı olmalı
+unsigned int Sensor1Arry[Sensor_ArrySize],Sensor1Sum,Sensor1AVG,Sensor1NewData;
+unsigned char Sensor1Indis;
+
 //ID selector
 void setupID(){
   pinMode(0, INPUT);
@@ -31,7 +35,16 @@ void setup() {
   Wire.onRequest(requestEvent);
 }
 void loop() {
-  potantiometer = map(analogRead(POTANTIOMETER_PIN),0,1024,0,255);
+  Sensor1NewData = analogRead(POTANTIOMETER_PIN);
+
+  // filtering // moving avarage //
+  Sensor1Sum = Sensor1Sum + Sensor1NewData - Sensor1Arry[Sensor1Indis];
+  Sensor1AVG = Sensor1Sum / Sensor_ArrySize;
+  Sensor1Arry[Sensor1Indis] = Sensor1NewData;
+  Sensor1Indis ++;
+  Sensor1Indis &= (Sensor_ArrySize - 1);
+  
+  potantiometer = map(Sensor1AVG,0,1024,0,255);
 }
 
 void requestEvent() {

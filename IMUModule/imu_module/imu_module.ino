@@ -3,7 +3,7 @@
 #include <avr/wdt.h>
 
 #define ID_OFFSET   46
-#define Sensor_ArrySize 128  //** Sensor_ArrySize 2 nin katı olmalı
+#define Sensor_ArrySize 32  //** Sensor_ArrySize 2 nin katı olmalı
 uint8_t i2cSlaveAdress = 0;
 
 
@@ -56,7 +56,6 @@ void setup() {
   wire.write(0x6B);
   wire.write(0x00);
   wire.endTransmission(true);
-
   delay(20);
 }
 

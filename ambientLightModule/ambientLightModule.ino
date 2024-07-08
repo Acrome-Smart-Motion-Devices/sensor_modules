@@ -4,6 +4,9 @@
 #define ID_OFFSET     6
 uint8_t i2cSlaveAdress = 0;
 
+#define Sensor_ArrySize 16  //** Sensor_ArrySize 2 nin katı olmalı
+unsigned int Sensor1Arry[Sensor_ArrySize],Sensor1Sum,Sensor1AVG,Sensor1NewData;
+unsigned char Sensor1Indis;
 
 //ID selector
 void setupID(){
@@ -44,8 +47,17 @@ void loop() {
   
   //parser.lux = analogRead(AMBIENT_LIGHT_PIN)* 5 / 1024 * 540,54;
   //parser.lux = analogRead(AMBIENT_LIGHT_PIN);
+  Sensor1NewData = analogRead(AMBIENT_LIGHT_PIN);
+
+  // filtering // moving avarage //
+  Sensor1Sum = Sensor1Sum + Sensor1NewData - Sensor1Arry[Sensor1Indis];
+  Sensor1AVG = Sensor1Sum / Sensor_ArrySize;
+  Sensor1Arry[Sensor1Indis] = Sensor1NewData;
+  Sensor1Indis ++;
+  Sensor1Indis &= (Sensor_ArrySize - 1);
   
-  parser.lux =(uint16_t)(analogRead(AMBIENT_LIGHT_PIN) * 2.34375);
+  
+  parser.lux =(uint16_t)(Sensor1AVG * 2.34375);
   delay(5);
 }
 

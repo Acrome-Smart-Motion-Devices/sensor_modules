@@ -32,9 +32,18 @@ void setup() {
 }
 
 void loop() {
-
-  button = digitalRead(buttonPin)^(0x01);
-
+  int button_count = 0;
+  for (int i = 0; i < 3; i++) {
+    if (digitalRead(buttonPin) == HIGH) {
+      button_count++;
+    }
+  }
+  if (button_count >= 2) {
+      button = 0x01;
+  }
+  else{
+    button = 0x00;
+  }
 }
 
 
