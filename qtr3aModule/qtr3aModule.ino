@@ -4,13 +4,17 @@
 #define ID_OFFSET   26
 uint8_t i2cSlaveAdress = 0;
 
-#define Sensor_ArrySize 32  //** Sensor_ArrySize 2 nin katı olmalı
+#define Sensor_ArrySize 16  //** Sensor_ArrySize 2 nin katı olmalı
 unsigned int Sensor1Arry[Sensor_ArrySize],Sensor1Sum,Sensor1AVG,Sensor1NewData;
 unsigned char Sensor1Indis;
 unsigned int  Sensor2Arry[Sensor_ArrySize],Sensor2Sum,Sensor2AVG,Sensor2NewData;
 unsigned char Sensor2Indis;
 unsigned int  Sensor3Arry[Sensor_ArrySize],Sensor3Sum,Sensor3AVG,Sensor3NewData;
 unsigned char Sensor3Indis;
+
+uint8_t sensor1_filtered;
+uint8_t sensor2_filtered;
+uint8_t sensor3_filtered;
 
 //ID selector
 void setupID(){
@@ -68,31 +72,15 @@ void loop()
   Sensor3Indis ++;
   Sensor3Indis &= (Sensor_ArrySize - 1);
 
-
-  if (Sensor1AVG > 500){
-    data |= (1 << 0);
-  }
-  else{
-    data &= ~(1 << 0);
-  }
-  
-  if (Sensor2AVG > 500){
-    data |= (1 << 1);
-  }
-  else{
-    data &= ~(1 << 1);
-  }
-  
-  if (Sensor3AVG > 500){
-    data |= (1 << 2);
-  }
-  else{
-    data &= ~(1 << 2);
-  }  
+  sensor1_filtered = map(Sensor1AVG,0,1024,0,255);
+  sensor2_filtered = map(Sensor2AVG,0,1024,0,255);
+  sensor3_filtered = map(Sensor3AVG,0,1024,0,255);
 }
 
 
 void requestEvent() {
-  Wire.write(data);
+  Wire.write(sensor1_filtered);
+  Wire.write(sensor2_filtered);
+  Wire.write(sensor3_filtered);
   wdt_reset(); //watchdog timer reset
 }
