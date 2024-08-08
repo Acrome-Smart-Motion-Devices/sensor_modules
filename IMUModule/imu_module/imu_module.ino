@@ -3,7 +3,7 @@
 #include <avr/wdt.h>
 
 #define ID_OFFSET   46
-#define Sensor_ArrySize 32  //** Sensor_ArrySize 2 nin katı olmalı
+#define Sensor_ArrySize 32  //** Sensor_ArrySize must be the power of the 2
 uint8_t i2cSlaveAdress = 0;
 
 

@@ -4,7 +4,7 @@
 #define ID_OFFSET   26
 uint8_t i2cSlaveAdress = 0;
 
-#define Sensor_ArrySize 16  //** Sensor_ArrySize 2 nin katı olmalı
+#define Sensor_ArrySize 16  //** Sensor_ArrySize must be the power of the 2
 unsigned int Sensor1Arry[Sensor_ArrySize],Sensor1Sum,Sensor1AVG,Sensor1NewData;
 unsigned char Sensor1Indis;
 unsigned int  Sensor2Arry[Sensor_ArrySize],Sensor2Sum,Sensor2AVG,Sensor2NewData;
