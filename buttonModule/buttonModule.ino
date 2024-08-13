@@ -39,10 +39,10 @@ void loop() {
     }
   }
   if (button_count >= 2) {
-      button = 0x01;
+      button = 0x00;
   }
   else{
-    button = 0x00;
+    button = 0x01;
   }
 }
 
