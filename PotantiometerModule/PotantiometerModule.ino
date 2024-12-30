@@ -1,7 +1,7 @@
 #include <Wire.h>
 #include <avr/wdt.h>
 
-#define ID_OFFSET     6
+#define ID_OFFSET   36
 uint8_t i2cSlaveAdress = 0;
 
 #define Sensor_ArrySize 16  //** Sensor_ArrySize must be the power of the 2
@@ -23,12 +23,8 @@ void setupID(){
   i2cSlaveAdress = i + ID_OFFSET;
 }
 
-#define AMBIENT_LIGHT_PIN   (A0)
-
-union dataParser {
-  uint8_t   u8[2];
-  uint16_t  lux;
-} parser;
+#define POTANTIOMETER_PIN   (A0)
+uint8_t potantiometer = 0;
 
 void setup() {
   wdt_enable(WDTO_250MS);
@@ -38,16 +34,8 @@ void setup() {
   }
   Wire.onRequest(requestEvent);
 }
-
 void loop() {
-  //    A * 36*10^5 = LUX
-  //    V / R = A
-  //    Analog / 1024 * 5 = V
-  // 7.4K ohm
-  
-  //parser.lux = analogRead(AMBIENT_LIGHT_PIN)* 5 / 1024 * 540,54;
-  //parser.lux = analogRead(AMBIENT_LIGHT_PIN);
-  Sensor1NewData = analogRead(AMBIENT_LIGHT_PIN);
+  Sensor1NewData = analogRead(POTANTIOMETER_PIN);
 
   // filtering // moving avarage //
   Sensor1Sum = Sensor1Sum + Sensor1NewData - Sensor1Arry[Sensor1Indis];
@@ -56,13 +44,10 @@ void loop() {
   Sensor1Indis ++;
   Sensor1Indis &= (Sensor_ArrySize - 1);
   
-  
-  parser.lux =(uint16_t)(Sensor1AVG * 2.34375);
-  delay(5);
+  potantiometer = map(Sensor1AVG,0,1024,0,255);
 }
 
 void requestEvent() {
-  Wire.write(parser.u8[0]);
-  Wire.write(parser.u8[1]);
+  Wire.write(potantiometer);
   wdt_reset();
 }
