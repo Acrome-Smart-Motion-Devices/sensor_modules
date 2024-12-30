@@ -1,10 +1,9 @@
 #include <Wire.h>
 #include <Servo.h>
-#include <avr/wdt.h>
 
 
 #define ID_OFFSET   31
-uint8_t i2cSlaveAdress = 0;
+uint8_t uart_id = 0;
 
 //ID selector
 void setupID(){
@@ -18,36 +17,31 @@ void setupID(){
   for(i=4;i>=0;i--) if(digitalRead(i)==1) break;
   if(i == -1) i = 0;
 
-  i2cSlaveAdress = i + ID_OFFSET;
+  uart_id = i + ID_OFFSET;
 }
-
-
 
 Servo servo;
 
 uint8_t receivedData = 0;   //isaretli sayi almali.  motorun donme yonune gore kontrol et test et.
 
 
-void setup(){
-  wdt_enable(WDTO_250MS);
+void setup(){                                                                                                                                                                                                                                          
   setupID();
+  /*
   if(i2cSlaveAdress != 0){
     Wire.begin(i2cSlaveAdress);
     Wire.onReceive(receiveEvent);
   }
-  
+  */
   servo.attach(5);
 }
-
+ 
 void loop()
-{  
-  servo.write(receivedData);
-}
+{
 
-void receiveEvent(int byteCount)
-{ 
-    if (byteCount > 0) {
-    receivedData = Wire.read();
-    wdt_reset();
-    }
+  servo.write(120);
+  delay(1000);
+  servo.write(30);
+  delay(1000);
+//servo.write(receivedDa ta);
 }
