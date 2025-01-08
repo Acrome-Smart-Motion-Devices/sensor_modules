@@ -1,8 +1,8 @@
 #include <Wire.h>
 #include <avr/wdt.h>
 
-#define ID_OFFSET   26
-uint8_t i2cSlaveAdress = 0;
+#define MODULE_TYPE   26
+
 
 #define Sensor_ArrySize 16  //** Sensor_ArrySize must be the power of the 2
 unsigned int Sensor1Arry[Sensor_ArrySize],Sensor1Sum,Sensor1AVG,Sensor1NewData;
@@ -11,47 +11,40 @@ unsigned int  Sensor2Arry[Sensor_ArrySize],Sensor2Sum,Sensor2AVG,Sensor2NewData;
 unsigned char Sensor2Indis;
 unsigned int  Sensor3Arry[Sensor_ArrySize],Sensor3Sum,Sensor3AVG,Sensor3NewData;
 unsigned char Sensor3Indis;
+unsigned int  Sensor4Arry[Sensor_ArrySize],Sensor4Sum,Sensor4AVG,Sensor4NewData;
+unsigned char Sensor4Indis;
+unsigned int  Sensor5Arry[Sensor_ArrySize],Sensor5Sum,Sensor5AVG,Sensor5NewData;
+unsigned char Sensor5Indis;
 
 uint8_t sensor1_filtered;
 uint8_t sensor2_filtered;
 uint8_t sensor3_filtered;
+uint8_t sensor4_filtered;
+uint8_t sensor5_filtered;
 
-//ID selector
-void setupID(){
-  pinMode(0, INPUT);
-  pinMode(1, INPUT);
-  pinMode(2, INPUT);
-  pinMode(3, INPUT);
-  pinMode(4, INPUT);
+uint16_t qtr_count = 0;
 
-  int i;
-  for(i=4;i>=0;i--) if(digitalRead(i)==1) break;
-  if(i == -1) i = 0;
-
-  i2cSlaveAdress = i + ID_OFFSET;
-}
-#define QTR_L   (A0)
-#define QTR_M   (A2)
-#define QTR_R   (A1)
+#define QTR_0   (A6)
+#define QTR_1   (A7)
+#define QTR_2   (A0)
+#define QTR_3   (A1)
+#define QTR_4   (A3)
 
 uint8_t data = 0;
 
 void setup()
 {
-  wdt_enable(WDTO_250MS);
-  setupID();
-  if(i2cSlaveAdress != 0){
-    Wire.begin(i2cSlaveAdress);
-    Wire.onRequest(requestEvent);
-  }
+  pinMode(11, OUTPUT);
 }
 
 
 void loop()
 {
-  Sensor1NewData = analogRead(QTR_L);
-  Sensor2NewData = analogRead(QTR_M);
-  Sensor3NewData = analogRead(QTR_R);
+  Sensor1NewData = analogRead(QTR_0);
+  Sensor2NewData = analogRead(QTR_1);
+  Sensor3NewData = analogRead(QTR_2);
+  Sensor4NewData = analogRead(QTR_3);
+  Sensor5NewData = analogRead(QTR_4);
 
 
   Sensor1Sum = Sensor1Sum + Sensor1NewData - Sensor1Arry[Sensor1Indis];
@@ -72,15 +65,52 @@ void loop()
   Sensor3Indis ++;
   Sensor3Indis &= (Sensor_ArrySize - 1);
 
+  Sensor4Sum = Sensor4Sum + Sensor4NewData - Sensor4Arry[Sensor4Indis];
+  Sensor4AVG = Sensor4Sum / Sensor_ArrySize;
+  Sensor4Arry[Sensor4Indis] = Sensor4NewData;
+  Sensor4Indis ++;
+  Sensor4Indis &= (Sensor_ArrySize - 1);
+
+  Sensor5Sum = Sensor5Sum + Sensor5NewData - Sensor5Arry[Sensor5Indis];
+  Sensor5AVG = Sensor5Sum / Sensor_ArrySize;
+  Sensor5Arry[Sensor5Indis] = Sensor5NewData;
+  Sensor5Indis ++;
+  Sensor5Indis &= (Sensor_ArrySize - 1);
+
   sensor1_filtered = map(Sensor1AVG,0,1024,0,255);
   sensor2_filtered = map(Sensor2AVG,0,1024,0,255);
   sensor3_filtered = map(Sensor3AVG,0,1024,0,255);
+  sensor4_filtered = map(Sensor4AVG,0,1024,0,255);
+  sensor5_filtered = map(Sensor5AVG,0,1024,0,255);
+
+  qtr_count++;
+  uint16_t index = qtr_count / 100;
+  if (qtr_count >= 500) qtr_count = 0;
+
+  
+
+  switch qtr_count{
+    case 0:
+      analogWrite(11, sensor1_filtered);
+      break;
+    case 2:
+      analogWrite(11, sensor2_filtered);
+      break;
+    case 3:
+      analogWrite(11, sensor3_filtered);
+      break;
+    case 4:
+      analogWrite(11, sensor4_filtered);
+      break;
+    case 5:
+      analogWrite(11, sensor5_filtered);
+      break;
+  }
+  if(  == 0){
+    analogWrite(11, sensor1_filtered);
+  }
+  
+
 }
 
 
-void requestEvent() {
-  Wire.write(sensor1_filtered);
-  Wire.write(sensor2_filtered);
-  Wire.write(sensor3_filtered);
-  wdt_reset(); //watchdog timer reset
-}
